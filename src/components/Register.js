@@ -74,14 +74,14 @@ const Register = () => {
                 >
                     <p
                         ref={errRef}
-                        className={error ? "errMsg" : "offscreen"}
+                        className={error ? "text-xl text-slate-100" : "hidden"}
                         aria-live="assertive"
                     >
                         {error}
                     </p>
                     <form
                         onSubmit={handleSubmit}
-                        className=" shadow-lg hover:shadow-xl min-w-xs w-1/4 p-5 backdrop-blur-md"
+                        className=" shadow-lg hover:shadow-xl min-w-xs w-1/4 p-5 backdrop-blur-md backdrop-invert-1"
                     >
                         <h1 className="mb-5 text-center font-thin text-4xl text-slate-200">
                             Register
@@ -137,7 +137,7 @@ const Register = () => {
 
                         {/* Password */}
                         <div className="flex flex-row mt-2">
-                            <label htmlFor="password" className="font-thin text-sky-900">
+                            <label htmlFor="password" className="font-thin text-sky-100">
                                 Password:
                             </label>
                             <label
@@ -171,7 +171,7 @@ const Register = () => {
                         <p
                             id="passwordnote"
                             className={
-                                focusPassword && !validPassword ? "pt-2 font-thin" : "hidden"
+                                focusPassword && !validPassword ? "pt-2 font-thin text-sky-100" : "hidden"
                             }
                         >
                             <MdInfo className="text-red-600" />
@@ -186,7 +186,7 @@ const Register = () => {
                         <div className="flex flex-row mt-2">
                             <label
                                 htmlFor="confirmPassword"
-                                className="font-thin text-sky-900"
+                                className="font-thin text-sky-100"
                             >
                                 Confirm Password:
                             </label>
@@ -216,11 +216,10 @@ const Register = () => {
                             onFocus={() => setFocusMatch(true)}
                             onBlur={() => setFocusMatch(false)}
                         />
-
                         <p
                             id="confirmnote"
                             className={
-                                focusMatch && !validMatch ? "pt-2 font-thin" : "hidden"
+                                focusMatch && !validMatch ? "pt-2 font-thin text-sky-100" : "hidden"
                             }
                         >
                             <MdInfo className="text-red-600" />
@@ -241,13 +240,13 @@ const Register = () => {
                             Submit
                         </button>
 
-                        <p className="text-center font-thin text-sky-900">
+                        <p className="text-center font-thin text-sky-300">
                             Already Registered?
                             <br />
                             <span>
                                 <a
                                     href="#"
-                                    className="hover:text-black hover:font-normal hover:text-black hover:px-2"
+                                    className="hover:text-white hover:font-normal hover:px-2"
                                 >
                                     Sign In
                                 </a>
