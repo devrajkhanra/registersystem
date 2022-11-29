@@ -3,7 +3,7 @@ import Register from "./components/Register";
 function App() {
   return (
     <div className="App">
-      <Register />
+      <Register style={{ backgroundImage: `url(./asset/screen.jpg)` }} />
     </div>
   );
 }
