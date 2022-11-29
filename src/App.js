@@ -1,4 +1,5 @@
 import Register from "./component/Register";
+import './component/Register.css'
 
 function App() {
   return (
