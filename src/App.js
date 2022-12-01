@@ -4,7 +4,7 @@ import './component/Register.css'
 function App() {
   return (
     <div className="App">
-      <Register style={{ backgroundImage: `url(./asset/screen.jpg)` }} />
+      <Register />
     </div>
   );
 }

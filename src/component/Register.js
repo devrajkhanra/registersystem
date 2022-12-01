@@ -1,9 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import { MdCheck, MdInfo } from "react-icons/md";
-import { FaTimes } from "react-icons/fa";
+import { MdInfo } from "react-icons/md";
+import { TfiCheck, TfiClose } from 'react-icons/tfi'
+
+import axios from "../api/axios";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const REGISTER_URL = '/register'
 
 const Register = () => {
     const userRef = useRef();
@@ -53,7 +56,25 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(username, password);
+
+        const response = await axios.post(REGISTER_URL, JSON.stringify({ username, password }),
+            {
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: true,
+            })
+
+        console.log(response.data)
+        console.log(response.accessToken)
+        console.log(JSON.stringify(response))
         setSuccess(true);
+
+        if (!error?.response) {
+            setError('No server Response')
+        } else if (error.response?.status === 409) {
+            setError('Username Taken')
+        } else {
+            setError('Registration Failed')
+        }
     };
 
     return (
@@ -69,7 +90,7 @@ const Register = () => {
                 </section>
             ) : (
                 <section
-                    className="grid place-items-center min-w-xs"
+                    className="grid place-items-center min-w-xs bg-gradient-to-r from-purple-100 to-blue-100"
                 >
                     <p
                         ref={errRef}
@@ -80,49 +101,43 @@ const Register = () => {
                     </p>
                     <form
                         onSubmit={handleSubmit}
-                        className=" shadow-lg hover:shadow-xl min-w-xs w-1/4 p-5 backdrop-blur-md backdrop-invert-1"
-                    >
-                        <h1 className="mb-5 text-center font-thin text-4xl text-slate-200">
+                        className=" shadow-md min-w-xs w-[27%] py-5 px-10 bg-white">
+
+                        <h1 className="my-5 font-semibold text-2xl text-slate-700">
                             Register
                         </h1>
 
                         {/* Username */}
-                        <div className="flex flex-row">
-                            <label htmlFor="username" className="font-thin text-sky-100">
-                                Username:
-                            </label>
-                            <label
-                                className={`${validUser ? "text-green-600 text-2xl" : "hidden"
-                                    }`}
-                            >
-                                <MdCheck />
-                            </label>
-                            <label
-                                className={` ${validUser || !username ? "hidden" : "text-red-600 text-2xl"
-                                    }`}
-                            >
-                                <FaTimes />
-                            </label>
-                        </div>
-                        <input
-                            id="username"
-                            className={`min-w-[100%] ring-1 rounded h-8 pl-4 font-thin ${validUser ? "ring-green-600" : "ring-red-600"
-                                }`}
-                            type="text"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            aria-invalid={validUser ? "false" : "true"}
-                            aria-labelledby="usernamenote"
-                            onFocus={() => setFocusUser(true)}
-                            onBlur={() => setFocusUser(false)}
-                        />
+                        <div className={`min-w-[100%] inline-flex items-baseline focus:outline-none focus:border-blue-800 ${validUser ? 'border-b border-green-500' : validUser === '' ? 'border-b border-blue-500' : 'border-b border-red-500'}`}>
 
+                            <input
+                                id="username"
+                                className={`min-w-[93%] font-thin placeholder:text-slate-800 text-xl focus:border-none focus:outline-none`}
+                                type="text"
+                                placeholder="username"
+                                ref={userRef}
+                                autoComplete="off"
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                aria-invalid={validUser ? "false" : "true"}
+                                aria-labelledby="usernamenote"
+                                onFocus={() => setFocusUser(true)}
+                                onBlur={() => setFocusUser(false)} />
+
+                            <span
+                                className={` ${validUser ? "text-green-600 ease-in-out duration-1000" : "hidden"
+                                    }`}>
+                                <TfiCheck />
+                            </span>
+                            <span
+                                className={` ${validUser || !username ? "hidden" : "text-red-600 ease-in-out duration-1000"
+                                    }`}>
+                                <TfiClose /></span>
+                        </div>
                         <p
                             id="usernamenote"
-                            className={`text-sky-200 ${focusUser && username && !validUser
-                                ? "pt-2 font-thin"
+                            className={`text-black ${focusUser && username && !validUser
+                                ? "pt-2 font-normal"
                                 : "hidden"
                                 }`}
                         >
@@ -135,43 +150,42 @@ const Register = () => {
                         </p>
 
                         {/* Password */}
-                        <div className="flex flex-row mt-2">
-                            <label htmlFor="password" className="font-thin text-sky-100">
-                                Password:
-                            </label>
-                            <label
-                                className={` ${validPassword ? "text-green-600 text-2xl" : "hidden"
+                        <div className={`min-w-[100%] inline-flex items-baseline focus:outline-none focus:border-blue-800 ${validPassword ? 'border-b border-green-500' : validPassword === '' ? 'border-b border-blue-500' : 'border-b border-red-500'}`}>
+                            <input
+                                id="password"
+                                className={`mt-5 min-w-[93%] font-thin placeholder:text-slate-800 text-xl focus:border-none focus:outline-none`}
+                                type="password"
+                                placeholder='password'
+                                // ref={userRef}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                aria-invalid={validPassword ? "false" : "true"}
+                                aria-labelledby="passwordnote"
+                                onFocus={() => setFocusPassword(true)}
+                                onBlur={() => setFocusPassword(false)}
+                            />
+                            <span
+                                className={` ${validPassword ? "text-green-600" : "hidden"
                                     }`}
                             >
-                                <MdCheck />
-                            </label>
-                            <label
+                                <TfiCheck />
+                            </span>
+                            <span
                                 className={`${validPassword || !password
                                     ? "hidden"
-                                    : "text-red-600 text-2xl"
+                                    : "text-red-600"
                                     }`}
                             >
-                                <FaTimes />
-                            </label>
+                                <TfiClose />
+                            </span>
                         </div>
-                        <input
-                            id="password"
-                            className={`min-w-full ring-1 rounded h-8 pl-4 font-thin ${validPassword ? "ring-green-600" : "ring-red-600"
-                                }`}
-                            type="password"
-                            // ref={userRef}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            aria-invalid={validPassword ? "false" : "true"}
-                            aria-labelledby="passwordnote"
-                            onFocus={() => setFocusPassword(true)}
-                            onBlur={() => setFocusPassword(false)}
-                        />
+
                         <p
                             id="passwordnote"
-                            className={
-                                focusPassword && !validPassword ? "pt-2 font-thin text-sky-100" : "hidden"
-                            }
+                            className={`text-black ${focusPassword && password && !validPassword
+                                ? "pt-2 font-normal"
+                                : "hidden"
+                                }`}
                         >
                             <MdInfo className="text-red-600" />
                             8 to 24 characters,
@@ -182,44 +196,39 @@ const Register = () => {
                         </p>
 
                         {/* Confirm Password */}
-                        <div className="flex flex-row mt-2">
-                            <label
-                                htmlFor="confirmPassword"
-                                className="font-thin text-sky-100"
-                            >
-                                Confirm Password:
-                            </label>
-                            <label
-                                className={` ${validMatch && match ? "text-green-600 text-2xl" : "hidden"
+                        <div className={`min-w-[100%] inline-flex items-baseline focus:outline-none focus:border-blue-800 ${validMatch ? 'border-b border-green-500' : validMatch === '' ? 'border-b border-blue-500' : 'border-b border-red-500'}`}>
+                            <input
+                                id="confirmPassword"
+                                className={`mt-5 min-w-[93%] font-thin placeholder:text-slate-800 text-xl focus:border-none focus:outline-none`}
+                                type="password"
+                                // ref={userRef}
+                                onChange={(e) => setMatch(e.target.value)}
+                                required
+                                aria-invalid={validMatch ? "false" : "true"}
+                                aria-labelledby="confirmnote"
+                                onFocus={() => setFocusMatch(true)}
+                                onBlur={() => setFocusMatch(false)}
+                            />
+                            <span
+                                className={` ${validMatch && match ? "text-green-600 font-bold" : "hidden"
                                     }`}
                             >
-                                <MdCheck />
-                            </label>
-                            <label
-                                className={` ${validMatch || !match ? "hidden" : "text-red-600 text-2xl"
+                                <TfiCheck />
+                            </span>
+                            <span
+                                className={` ${validMatch || !match ? "hidden" : "text-red-600 text-"
                                     }`}
                             >
-                                <FaTimes />
-                            </label>
+                                <TfiClose />
+                            </span>
                         </div>
-                        <input
-                            id="confirmPassword"
-                            className={`min-w-full ring-1 rounded h-8 pl-4 font-thin ${validMatch ? "ring-green-600" : "ring-red-600"
-                                }`}
-                            type="password"
-                            // ref={userRef}
-                            onChange={(e) => setMatch(e.target.value)}
-                            required
-                            aria-invalid={validMatch ? "false" : "true"}
-                            aria-labelledby="confirmnote"
-                            onFocus={() => setFocusMatch(true)}
-                            onBlur={() => setFocusMatch(false)}
-                        />
+
                         <p
                             id="confirmnote"
-                            className={
-                                focusMatch && !validMatch ? "pt-2 font-thin text-sky-100" : "hidden"
-                            }
+                            className={`text-black ${focusMatch && match && !validMatch
+                                ? "pt-2 font-normal"
+                                : "hidden"
+                                }`}
                         >
                             <MdInfo className="text-red-600" />
                             Must match with the above password field
@@ -227,26 +236,25 @@ const Register = () => {
                         </p>
 
                         {/* Submit button */}
-                        <button
-                            className={`hover:cursor min-w-full rounded mt-6 mb-4 py-2 font-thin text-xl ${validUser && validPassword && validMatch
-                                ? "bg-green-400 hover:bg-green-500 text-green-100 hover:shadow-lg hover:text-white"
-                                : "bg-slate-400 text-slate-100 hover:shadow-xl hover:text-slate-50 cursor-not-allowed"
-                                }`}
-                            disabled={
-                                !validUser || !validPassword || !validMatch ? true : false
-                            }
-                        >
-                            Submit
-                        </button>
+                        <div className="flex flex-row justify-end">
+                            <button
+                                className={` px-7 hover:cursor min-w-[25%] mt-6 mb-4 py-1 font-normal text-md ${validUser && validPassword && validMatch
+                                    ? "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg"
+                                    : "bg-slate-400 text-white hover:shadow-xl hover:text-slate-50 cursor-not-allowed"
+                                    }`}
+                                disabled={
+                                    !validUser || !validPassword || !validMatch ? true : false
+                                }
+                            >
+                                Submit
+                            </button>
+                        </div>
 
-                        <p className="text-center font-thin text-sky-300">
+                        <p className="text-center font-thin text-slate-800">
                             Already Registered?
                             <br />
                             <span>
-                                <a
-                                    href="#"
-                                    className="hover:text-white hover:font-normal hover:px-2"
-                                >
+                                <a href="#" className="text-blue-900 hover:text-black hover:font-normal hover:px-2">
                                     Sign In
                                 </a>
                             </span>
@@ -259,3 +267,4 @@ const Register = () => {
 };
 
 export default Register;
+
